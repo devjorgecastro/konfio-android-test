@@ -1,0 +1,1 @@
+# Konfio - Android technical test
