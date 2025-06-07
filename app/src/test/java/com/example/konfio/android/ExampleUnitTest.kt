@@ -1,8 +1,7 @@
-package com.example.konfio_android_test
+package com.example.konfio.android
 
+import org.junit.Assert
 import org.junit.Test
-
-import org.junit.Assert.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -12,6 +11,6 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+        Assert.assertEquals(4, 2 + 2)
     }
 }
