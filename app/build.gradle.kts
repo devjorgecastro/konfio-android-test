@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.konfio_android_test"
+    namespace = "com.example.konfio.android"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.konfio_android_test"
+        applicationId = "com.example.konfio.android"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
@@ -56,4 +56,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.coil3.compose)
+    implementation(libs.coil3.network.okhttp)
 }
