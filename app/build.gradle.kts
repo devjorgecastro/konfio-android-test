@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.com.google.devtools.ksp)
+    alias(libs.plugins.dagger.hilt.android)
 }
 
 android {
@@ -57,6 +59,20 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(libs.androidx.hilt.navigation.compose) {
+        exclude(group = "androidx.navigation", module = "navigation-compose")
+    }
+    implementation(libs.androidx.navigation.compose)
+
     implementation(libs.coil3.compose)
     implementation(libs.coil3.network.okhttp)
+
+    implementation(libs.kotlin.coroutines.android)
+    testImplementation(libs.kotlin.coroutines.test)
+
+    implementation(libs.bundles.room)
+    ksp(libs.room.compiler)
+
+    implementation(libs.dagger.hilt.android)
+    ksp(libs.dagger.hilt.compiler)
 }
