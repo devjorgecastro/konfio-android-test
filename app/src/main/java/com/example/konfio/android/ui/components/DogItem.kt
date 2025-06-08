@@ -39,10 +39,11 @@ import com.example.konfio.android.ui.theme.DogsTheme
 @Composable
 fun DogItem(
     dog: Dog,
+    onDogClick: (Dog) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     Row(
+        modifier = modifier.clickable { onDogClick(dog) },
         verticalAlignment = Alignment.Bottom
     ) {
         AsyncImage(
@@ -147,7 +148,8 @@ fun DogItemPreview() {
                 description = "A friendly dog",
                 age = 5,
                 image = "https://example.com/dog.jpg"
-            )
+            ),
+            onDogClick = {}
         )
     }
 }
