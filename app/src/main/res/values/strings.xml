@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Konfio Dogs</string>
+    <string name="dogs_we_love">Dogs We Love</string>
+    <string name="almost_n_years_old">Almost %1$d years old</string>
 </resources>
