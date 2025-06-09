@@ -5,4 +5,6 @@
     <string name="almost_n_years_old">Quase %1$d anos</string>
     <string name="no_results_found">Nenhum resultado encontrado</string>
     <string name="close">Fechar</string>
+    <string name="server_connection_error">Não foi possível estabelecer conexão com o servidor</string>
+    <string name="unknown_error">Erro desconhecido</string>
 </resources> 
