@@ -1,17 +1,18 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.konfio.android.ui.screens.dogs
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
@@ -21,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,14 +30,23 @@ import com.example.konfio.android.R
 import com.example.konfio.android.ui.components.DogDetail
 import com.example.konfio.android.ui.components.DogItem
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun DogsScreen(
     viewModel: DogsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    
+    DogsScreen(
+        state = state,
+        onDispatchEvent = viewModel::onEvent
+    )
+}
+
+@Composable
+private fun DogsScreen(
+    state: DogsState = DogsState(),
+    onDispatchEvent: (DogsEvent) -> Unit = {}
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             topBar = {
@@ -54,7 +65,7 @@ fun DogsScreen(
                 items(state.dogs) { dog ->
                     DogItem(
                         dog = dog,
-                        onDogClick = { viewModel.onEvent(DogsEvent.SelectDog(dog)) }
+                        onDogClick = { onDispatchEvent(DogsEvent.SelectDog(dog)) }
                     )
                 }
             }
@@ -63,7 +74,7 @@ fun DogsScreen(
         state.selectedDog?.let { dog ->
             DogDetail(
                 dog = dog,
-                onDismiss = { viewModel.onEvent(DogsEvent.SelectDog(null)) }
+                onDismiss = { onDispatchEvent(DogsEvent.SelectDog(null)) }
             )
         }
 
@@ -74,20 +85,48 @@ fun DogsScreen(
         }
 
         state.error?.let { error ->
+
+            if (state.dogs.isEmpty()) {
+                EmptyStateView()
+            }
+
             Snackbar(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(16.dp),
                 action = {
                     androidx.compose.material3.TextButton(
-                        onClick = { viewModel.onEvent(DogsEvent.DismissError) }
+                        onClick = { onDispatchEvent(DogsEvent.DismissError) }
                     ) {
-                        Text("Cerrar")
+                        Text(stringResource(R.string.close))
                     }
                 }
             ) {
                 Text(error)
             }
+        }
+    }
+}
+
+@Composable
+private fun EmptyStateView() {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.empty_state),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(80.dp)
+            )
+
+            Text(stringResource(R.string.no_results_found))
         }
     }
 }

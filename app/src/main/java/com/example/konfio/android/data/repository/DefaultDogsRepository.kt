@@ -11,16 +11,18 @@ import javax.inject.Inject
 class DefaultDogsRepository @Inject constructor(
     @LocalDogsQualifier private val localDataSource: DogsDataSource,
     @RemoteDogsQualifier private val remoteDataSource: DogsReadableDataSource
-) : DogsRepository {
+) : BaseRepository(), DogsRepository {
 
     override suspend fun getDogs(): List<Dog> {
-        val localDogs = localDataSource.getDogs()
-        return if (localDogs.isEmpty()) {
-            remoteDataSource.getDogs().also { dogs ->
-                localDataSource.saveDogs(dogs)
+        return execute {
+            val localDogs = localDataSource.getDogs()
+            if (localDogs.isEmpty()) {
+                remoteDataSource.getDogs().also { dogs ->
+                    localDataSource.saveDogs(dogs)
+                }
+            } else {
+                localDogs
             }
-        } else {
-            localDogs
         }
     }
 }
