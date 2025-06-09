@@ -13,11 +13,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -59,18 +63,36 @@ private fun DogsScreenContent(
                 )
             }
         ) { paddingValues ->
-            LazyColumn(
-                contentPadding = paddingValues,
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+            val pullToRefreshState = rememberPullToRefreshState()
+            PullToRefreshBox(
+                isRefreshing = state.isRefreshing,
+                state = pullToRefreshState,
+                onRefresh = { onDispatchEvent(DogsEvent.RefreshDogs) },
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-            ) {
-                items(state.dogs) { dog ->
-                    DogItem(
-                        dog = dog,
-                        onDogClick = { onDispatchEvent(DogsEvent.SelectDog(dog)) }
+                    .padding(paddingValues),
+                indicator = {
+                    Indicator(
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        isRefreshing = state.isRefreshing,
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        state = pullToRefreshState
                     )
+                }
+            ) {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                ) {
+                    items(state.dogs) { dog ->
+                        DogItem(
+                            dog = dog,
+                            onDogClick = { onDispatchEvent(DogsEvent.SelectDog(dog)) }
+                        )
+                    }
                 }
             }
         }
@@ -87,7 +109,7 @@ private fun DogsScreenContent(
                 modifier = Modifier.align(Alignment.Center)
             )
         }
-        
+
         if (state.showEmptyState) {
             EmptyStateView()
         }

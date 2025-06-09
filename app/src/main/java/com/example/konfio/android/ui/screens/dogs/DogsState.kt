@@ -7,6 +7,7 @@ data class DogsState(
     val dogs: List<Dog> = emptyList(),
     val selectedDog: Dog? = null,
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val showEmptyState: Boolean = false,
     @StringRes val errorMessageRes: Int? = null
 )
