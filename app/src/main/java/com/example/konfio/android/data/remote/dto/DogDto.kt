@@ -1,10 +1,10 @@
-package com.example.konfio.android.domain.model
+package com.example.konfio.android.data.remote.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Dog(
+data class DogDto(
     @SerialName("dogName")
     val dogName: String,
     @SerialName("description")
@@ -13,4 +13,4 @@ data class Dog(
     val age: Int,
     @SerialName("image")
     val image: String
-)
+) 

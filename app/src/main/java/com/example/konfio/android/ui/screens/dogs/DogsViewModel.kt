@@ -1,28 +1,64 @@
 package com.example.konfio.android.ui.screens.dogs
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.konfio.android.domain.model.Dog
+import androidx.lifecycle.viewModelScope
 import com.example.konfio.android.domain.usecase.GetDogsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DogsViewModel @Inject constructor(
     private val getDogsUseCase: GetDogsUseCase
 ) : ViewModel() {
-    val dogs: List<Dog> = getDogsUseCase()
-    
-    var selectedDog: Dog? by mutableStateOf(null)
-        private set
-        
-    fun onDogSelected(dog: Dog) {
-        selectedDog = dog
+
+    private val mutableState = MutableStateFlow(DogsState())
+    val state: StateFlow<DogsState> = mutableState
+        .onStart {
+            onEvent(DogsEvent.LoadDogs)
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = DogsState()
+        )
+
+    fun onEvent(event: DogsEvent) {
+        when (event) {
+            is DogsEvent.LoadDogs -> loadDogs()
+            is DogsEvent.SelectDog -> selectDog(event.dog)
+            is DogsEvent.DismissError -> dismissError()
+        }
     }
-    
-    fun onDogDismissed() {
-        selectedDog = null
+
+    private fun loadDogs() {
+        viewModelScope.launch {
+            mutableState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val dogs = getDogsUseCase()
+                mutableState.update { it.copy(dogs = dogs, isLoading = false) }
+            } catch (e: Exception) {
+                mutableState.update {
+                    it.copy(
+                        error = e.message ?: "Error desconocido al cargar los perros",
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
+    private fun selectDog(dog: com.example.konfio.android.domain.model.Dog?) {
+        mutableState.update { it.copy(selectedDog = dog) }
+    }
+
+    private fun dismissError() {
+        mutableState.update { it.copy(error = null) }
     }
 } 
