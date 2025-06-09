@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Konfio Dogs</string>
+    <string name="dogs_we_love">Les Chiens que Nous Aimons</string>
+    <string name="almost_n_years_old">Presque %1$d ans</string>
+    <string name="no_results_found">Aucun résultat trouvé</string>
+    <string name="close">Fermer</string>
+</resources> 
