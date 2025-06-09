@@ -35,6 +35,7 @@ object NetworkModule {
                 json(Json {
                     ignoreUnknownKeys = true
                     prettyPrint = true
+                    isLenient = true
                 })
             }
             engine {
