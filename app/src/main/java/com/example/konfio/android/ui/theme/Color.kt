@@ -26,4 +26,7 @@ val md_theme_dark_onSecondaryContainer = Color(0xFFCFE9D9)
 val md_theme_dark_background = Color(0xFF191C1A)
 val md_theme_dark_onBackground = Color(0xFFE1E3DF)
 val md_theme_dark_surface = Color(0xFF191C1A)
-val md_theme_dark_onSurface = Color(0xFFE1E3DF) 
+val md_theme_dark_onSurface = Color(0xFFE1E3DF)
+
+val title_color = Color(0xFF333333)
+val description_color = Color(0xFF666666)

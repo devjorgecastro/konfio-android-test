@@ -29,6 +29,8 @@ import coil3.request.crossfade
 import com.example.konfio.android.R
 import com.example.konfio.android.domain.model.Dog
 import com.example.konfio.android.ui.theme.DogsTheme
+import com.example.konfio.android.ui.theme.description_color
+import com.example.konfio.android.ui.theme.title_color
 
 @Composable
 fun DogItem(
@@ -53,11 +55,13 @@ fun DogItem(
         ) {
             Text(
                 text = dog.dogName,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
+                color = title_color
             )
             Text(
                 text = dog.description,
                 style = MaterialTheme.typography.bodyMedium,
+                color = description_color,
                 modifier = Modifier.padding(top = 8.dp)
             )
             Text(
