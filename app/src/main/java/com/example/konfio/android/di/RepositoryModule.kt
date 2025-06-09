@@ -25,24 +25,4 @@ abstract class RepositoryModule {
     abstract fun bindDogsRepository(
         dogsRepositoryImpl: DefaultDogsRepository
     ): DogsRepository
-/*
-    companion object {
-        @Provides
-        @Singleton
-        fun provideHttpClient(): HttpClient {
-            return HttpClient(Android) {
-                install(ContentNegotiation) {
-                    json(Json {
-                        ignoreUnknownKeys = true
-                        prettyPrint = true
-                        isLenient = true
-                        explicitNulls = false
-                    })
-                }
-                install(Logging) {
-                    level = LogLevel.ALL
-                }
-            }
-        }
-    }*/
 } 
