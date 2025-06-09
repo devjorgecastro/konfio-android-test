@@ -91,7 +91,7 @@ private fun DogsScreenContent(
                 }
             ) {
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(32.dp),
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 16.dp),
