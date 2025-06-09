@@ -12,4 +12,4 @@ class DefaultDogsRepository @Inject constructor(
     override suspend fun getDogs(): List<Dog> {
         return api.getDogs().map { it.toDog() }
     }
-} 
+}

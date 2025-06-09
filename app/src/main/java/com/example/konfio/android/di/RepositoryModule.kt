@@ -18,14 +18,14 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class AppModule {
+abstract class RepositoryModule {
 
     @Binds
     @Singleton
     abstract fun bindDogsRepository(
         dogsRepositoryImpl: DefaultDogsRepository
     ): DogsRepository
-
+/*
     companion object {
         @Provides
         @Singleton
@@ -44,5 +44,5 @@ abstract class AppModule {
                 }
             }
         }
-    }
+    }*/
 } 
