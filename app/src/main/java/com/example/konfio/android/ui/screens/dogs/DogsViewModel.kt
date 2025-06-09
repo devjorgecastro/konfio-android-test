@@ -2,6 +2,7 @@ package com.example.konfio.android.ui.screens.dogs
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.konfio.android.R
 import com.example.konfio.android.domain.usecase.GetDogsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,15 +40,18 @@ class DogsViewModel @Inject constructor(
 
     private fun loadDogs() {
         viewModelScope.launch {
-            mutableState.update { it.copy(isLoading = true, error = null) }
+            mutableState.update { it.copy(isLoading = true, errorMessageRes = null) }
             try {
                 val dogs = getDogsUseCase()
-                mutableState.update { it.copy(dogs = dogs, isLoading = false) }
+                mutableState.update {
+                    it.copy(dogs = dogs, isLoading = false, showEmptyState = false)
+                }
             } catch (e: Exception) {
                 mutableState.update {
                     it.copy(
-                        error = e.message ?: "Error desconocido al cargar los perros",
-                        isLoading = false
+                        errorMessageRes = R.string.server_connection_error,
+                        isLoading = false,
+                        showEmptyState = it.dogs.isEmpty()
                     )
                 }
             }
@@ -59,6 +63,6 @@ class DogsViewModel @Inject constructor(
     }
 
     private fun dismissError() {
-        mutableState.update { it.copy(error = null) }
+        mutableState.update { it.copy(errorMessageRes = null) }
     }
 } 
