@@ -5,12 +5,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Dog(
-    @SerialName("dogName")
+    //@SerialName("dogName")
     val dogName: String,
-    @SerialName("description")
+    //@SerialName("description")
     val description: String,
-    @SerialName("age")
+    //@SerialName("age")
     val age: Int,
-    @SerialName("image")
+    //@SerialName("image")
     val image: String
 )

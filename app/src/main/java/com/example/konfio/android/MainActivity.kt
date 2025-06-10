@@ -1,13 +1,18 @@
+@file:OptIn(ExperimentalSharedTransitionApi::class)
+
 package com.example.konfio.android
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.example.konfio.android.ui.screens.dogs.DogsScreen
+import androidx.navigation.compose.rememberNavController
+import com.example.konfio.android.ui.nav.AppNavHost
 import com.example.konfio.android.ui.theme.DogsTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,7 +26,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    DogsScreen()
+                    SharedTransitionLayout {
+                        val navController = rememberNavController()
+                        AppNavHost(
+                            navHostController = navController,
+                            sharedTransitionScope = this
+                        )
+                    }
                 }
             }
         }

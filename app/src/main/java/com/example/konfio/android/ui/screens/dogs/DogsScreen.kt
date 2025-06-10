@@ -1,5 +1,12 @@
+@file:OptIn(ExperimentalSharedTransitionApi::class)
+
 package com.example.konfio.android.ui.screens.dogs
 
+import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -10,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,6 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -36,26 +45,33 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.konfio.android.R
 import com.example.konfio.android.domain.model.Dog
-import com.example.konfio.android.ui.components.DogDetail
+import com.example.konfio.android.ui.components.AnimatedDogDetailComponent
 import com.example.konfio.android.ui.components.DogItem
 import com.example.konfio.android.ui.theme.DogsTheme
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun DogsScreen(
-    viewModel: DogsViewModel = hiltViewModel()
+fun SharedTransitionScope.DogsScreen(
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: DogsViewModel = hiltViewModel(),
+    onItemClick: (Dog) -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
     DogsScreenContent(
         state = state,
-        onDispatchEvent = viewModel::onEvent
+        animatedVisibilityScope = animatedVisibilityScope,
+        onDispatchEvent = viewModel::onEvent,
+        onItemClick = onItemClick
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DogsScreenContent(
+private fun SharedTransitionScope.DogsScreenContent(
     state: DogsState = DogsState(),
-    onDispatchEvent: (DogsEvent) -> Unit = {}
+    animatedVisibilityScope: AnimatedVisibilityScope? = null,
+    onDispatchEvent: (DogsEvent) -> Unit = {},
+    onItemClick: (Dog) -> Unit = {}
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -90,24 +106,17 @@ private fun DogsScreenContent(
                     )
                 }
             ) {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(32.dp),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp),
-                ) {
-                    items(state.dogs) { dog ->
-                        DogItem(
-                            dog = dog,
-                            onDogClick = { onDispatchEvent(DogsEvent.SelectDog(dog)) }
-                        )
-                    }
-                }
+                DogsContent(
+                    state = state,
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    onDispatchEvent = onDispatchEvent,
+                    onItemClick = onItemClick
+                )
             }
         }
 
         state.selectedDog?.let { dog ->
-            DogDetail(
+            AnimatedDogDetailComponent(
                 dog = dog,
                 onDismiss = { onDispatchEvent(DogsEvent.SelectDog(null)) }
             )
@@ -128,6 +137,53 @@ private fun DogsScreenContent(
                 description = stringResource(error),
                 onDispatchEvent = onDispatchEvent
             )
+        }
+    }
+}
+
+@Composable
+private fun SharedTransitionScope.DogsContent(
+    state: DogsState = DogsState(),
+    animatedVisibilityScope: AnimatedVisibilityScope? = null,
+    onDispatchEvent: (DogsEvent) -> Unit = {},
+    onItemClick: (Dog) -> Unit = {}
+) {
+    val configuration = LocalConfiguration.current.orientation
+    when (configuration) {
+        Configuration.ORIENTATION_PORTRAIT -> {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(32.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+            ) {
+                items(state.dogs) { dog ->
+                    DogItem(
+                        dog = dog,
+                        onDogClick = { onDispatchEvent(DogsEvent.SelectDog(dog)) }
+                    )
+                }
+            }
+        }
+        else -> {
+            LazyRow(
+                horizontalArrangement = if (state.dogs.size <= 4) {
+                    Arrangement.SpaceBetween
+                } else {
+                    Arrangement.spacedBy(16.dp)
+                },
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+            ) {
+                items(state.dogs) { dog ->
+                    DogItem(
+                        dog = dog,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        onDogClick = { onItemClick(dog) }
+                    )
+                }
+            }
         }
     }
 }
@@ -197,23 +253,25 @@ private fun EmptyStateViewPreview() {
 @Composable
 private fun DogsScreenPreview() {
     DogsTheme {
-        DogsScreenContent(
-            state = DogsState(
-                dogs = listOf(
-                    Dog(
-                        dogName = "Fox",
-                        description = "Fox description",
-                        age = 3,
-                        image = "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg"
-                    ),
-                    Dog(
-                        dogName = "Pepito",
-                        description = "Pepito description",
-                        age = 4,
-                        image = "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg"
+        SharedTransitionLayout {
+            DogsScreenContent(
+                state = DogsState(
+                    dogs = listOf(
+                        Dog(
+                            dogName = "Fox",
+                            description = "Fox description",
+                            age = 3,
+                            image = "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg"
+                        ),
+                        Dog(
+                            dogName = "Pepito",
+                            description = "Pepito description",
+                            age = 4,
+                            image = "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg"
+                        )
                     )
                 )
             )
-        )
+        }
     }
 }

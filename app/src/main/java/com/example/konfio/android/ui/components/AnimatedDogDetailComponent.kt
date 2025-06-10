@@ -46,7 +46,7 @@ private const val CARD_CORNER_RADIUS_DP = 16
 private const val ANIMATION_DURATION_MS = 500
 
 @Composable
-fun DogDetail(
+fun AnimatedDogDetailComponent(
     dog: Dog,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
