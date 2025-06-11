@@ -19,19 +19,6 @@ import com.example.konfio.android.ui.screens.dogs.DogsViewModel
 import com.example.konfio.android.ui.screens.dogs.detail.DogDetailContract
 import com.example.konfio.android.ui.screens.dogs.detail.DogDetailScreen
 import com.example.konfio.android.ui.screens.dogs.detail.DogsDetailViewModel
-import kotlinx.serialization.Serializable
-
-@Serializable
-object DogsScreen
-
-// Define a profile route that takes an ID
-@Serializable
-data class DogDetail(
-    val imageUrl: String,
-    val name: String,
-    val description: String,
-    val age: Int
-)
 
 @Composable
 fun AppNavHost(
@@ -40,7 +27,7 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navHostController,
-        startDestination = DogsScreen
+        startDestination = AppRoute.Dogs
     ) {
         dogsScreen(
             navController = navHostController,
@@ -57,14 +44,14 @@ private fun NavGraphBuilder.dogsScreen(
     navController: NavHostController,
     sharedTransitionScope: SharedTransitionScope
 ) {
-    composable<DogsScreen> {
+    composable<AppRoute.Dogs> {
 
         val viewModel: DogsViewModel = hiltViewModel()
         CollectEffect(viewModel.navEffect) {
             when(it) {
                 is DogContract.NavEffect.NavToDetail -> {
                     navController.navigate(
-                        DogDetail(
+                        AppRoute.DogDetail(
                             imageUrl = it.dog.image,
                             name = it.dog.dogName,
                             description = it.dog.description,
@@ -86,7 +73,7 @@ private fun NavGraphBuilder.dogDetail(
     navController: NavHostController,
     sharedTransitionScope: SharedTransitionScope
 ) {
-    composable<DogDetail> { backStackEntry ->
+    composable<AppRoute.DogDetail> { backStackEntry ->
 
         val viewModel: DogsDetailViewModel = hiltViewModel()
         CollectEffect(viewModel.navEffect) {
@@ -95,14 +82,14 @@ private fun NavGraphBuilder.dogDetail(
             }
         }
 
-        val dog: DogDetail = backStackEntry.toRoute()
+        val detail: AppRoute.DogDetail = backStackEntry.toRoute()
         sharedTransitionScope.DogDetailScreen(
             viewModel = viewModel,
             dog = Dog(
-                dogName = dog.name,
-                description = dog.description,
-                age = dog.age,
-                image = dog.imageUrl
+                dogName = detail.name,
+                description = detail.description,
+                age = detail.age,
+                image = detail.imageUrl
             ),
             animatedVisibilityScope = this
         )
