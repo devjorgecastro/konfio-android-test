@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +8,19 @@ plugins {
     alias(libs.plugins.com.google.devtools.ksp)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.org.jetbrains.kotlinx.kover)
+    alias(libs.plugins.org.sonarqube)
+}
+
+fun getLocalProperties(): Properties {
+    val properties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        FileInputStream(localPropertiesFile).use { fileInputStream ->
+            properties.load(fileInputStream)
+        }
+    }
+    return properties
 }
 
 android {
@@ -51,6 +67,24 @@ android {
         unitTests.all {
             it.useJUnitPlatform()
         }
+    }
+}
+
+tasks.named("sonar") {
+    dependsOn("koverXmlReportDebug")
+}
+
+sonar {
+    val properties = getLocalProperties()
+    properties {
+        property("sonar.projectKey", properties.getProperty("SONAR_PROJECT_KEY"))
+        property("sonar.organization", "Konfio")
+        property("sonar.projectName", properties.getProperty("SONAR_PROJECT_NAME"))
+        property("sonar.host.url", properties.getProperty("SONAR_HOST_URL"))
+        property("sonar.sourceEncoding", "UTF-8")
+
+        val koverReportPath = layout.buildDirectory.file("reports/kover/reportDebug.xml").get().asFile.absolutePath
+        property("sonar.coverage.jacoco.xmlReportPaths", koverReportPath)
     }
 }
 
