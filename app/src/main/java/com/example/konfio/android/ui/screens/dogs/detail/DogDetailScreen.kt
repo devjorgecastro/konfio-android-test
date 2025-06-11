@@ -42,6 +42,9 @@ import androidx.compose.ui.graphics.Color
 private const val IMAGE_WIDTH = 350
 private const val IMAGE_HEIGHT = 550
 private const val DEFAULT_DELAY_FOR_ICON_ANIM = 300L
+private const val SHADOW_ELEVATION = 8
+private const val ICON_PADDING = 32
+private const val ICON_SIZE = 48
 
 @Composable
 fun SharedTransitionScope.DogDetailScreen(
@@ -73,10 +76,10 @@ fun SharedTransitionScope.DogDetailScreen(
                 imageVector = Icons.AutoMirrored.Default.ArrowBack,
                 contentDescription = null,
                 modifier = Modifier
-                    .padding(32.dp)
-                    .size(48.dp)
+                    .padding(ICON_PADDING.dp)
+                    .size(ICON_SIZE.dp)
                     .shadow(
-                        elevation = 8.dp,
+                        elevation = SHADOW_ELEVATION.dp,
                         shape = CircleShape,
                         clip = false
                     )

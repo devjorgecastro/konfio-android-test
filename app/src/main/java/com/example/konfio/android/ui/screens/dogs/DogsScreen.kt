@@ -9,28 +9,15 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -39,28 +26,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.konfio.android.R
 import com.example.konfio.android.domain.model.Dog
 import com.example.konfio.android.ui.components.AnimatedDogDetailComponent
 import com.example.konfio.android.ui.components.DogItem
+import com.example.konfio.android.ui.components.DogTopBar
+import com.example.konfio.android.ui.components.EmptyStateView
+import com.example.konfio.android.ui.components.SnackbarView
 import com.example.konfio.android.ui.theme.DogsTheme
 
-private object Defaults {
+private object Values {
     val HorizontalPadding = 16.dp
     val VerticalItemSpacingPortrait = 32.dp
     val VerticalItemSpacingLandscape = 16.dp
-    val SnackbarPadding = 16.dp
-    val SnackbarIconSize = 40.dp
-    val SnackbarIconTextSpacing = 8.dp
-    val EmptyStateIconSize = 80.dp
-    val EmptyStateSpacing = 8.dp
     const val MinDogsToDistributeSpace = 4
 }
 
@@ -143,39 +125,6 @@ private fun SharedTransitionScope.DogsScreenContent(
 }
 
 @Composable
-private fun DogTopBar(
-    onDispatchEvent: (DogsEvent) -> Unit = {}
-) {
-    TopAppBar(
-        title = {
-            Text(
-                text = stringResource(id = R.string.dogs_we_love),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-        },
-        actions = {
-            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                RefreshIcon(onDispatchEvent = onDispatchEvent)
-            }
-        }
-    )
-}
-
-@Composable
-private fun RefreshIcon(
-    onDispatchEvent: (DogsEvent) -> Unit = {}
-) {
-    IconButton(onClick = { onDispatchEvent(DogsEvent.RefreshDogs) }) {
-        Icon(
-            imageVector = Icons.Default.Refresh,
-            contentDescription = null
-        )
-    }
-}
-
-@Composable
 private fun SharedTransitionScope.DogsContent(
     state: DogContract.State = DogContract.State(),
     animatedVisibilityScope: AnimatedVisibilityScope? = null,
@@ -184,10 +133,10 @@ private fun SharedTransitionScope.DogsContent(
     when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> {
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(Defaults.VerticalItemSpacingPortrait),
+                verticalArrangement = Arrangement.spacedBy(Values.VerticalItemSpacingPortrait),
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = Defaults.HorizontalPadding),
+                    .padding(horizontal = Values.HorizontalPadding),
             ) {
                 items(state.dogs) { dog ->
                     DogItem(
@@ -199,14 +148,14 @@ private fun SharedTransitionScope.DogsContent(
         }
         else -> {
             LazyRow(
-                horizontalArrangement = if (state.dogs.size <= Defaults.MinDogsToDistributeSpace) {
+                horizontalArrangement = if (state.dogs.size <= Values.MinDogsToDistributeSpace) {
                     Arrangement.SpaceBetween
                 } else {
-                    Arrangement.spacedBy(Defaults.VerticalItemSpacingLandscape)
+                    Arrangement.spacedBy(Values.VerticalItemSpacingLandscape)
                 },
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = Defaults.HorizontalPadding),
+                    .padding(horizontal = Values.HorizontalPadding),
             ) {
                 items(state.dogs) { dog ->
                     DogItem(
@@ -216,59 +165,6 @@ private fun SharedTransitionScope.DogsContent(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun BoxScope.SnackbarView(
-    description: String = "",
-    onDispatchEvent: (DogsEvent) -> Unit = {}
-) {
-    Snackbar(
-        modifier = Modifier
-            .align(Alignment.BottomCenter)
-            .padding(Defaults.SnackbarPadding),
-        action = {
-            TextButton(
-                onClick = { onDispatchEvent(DogsEvent.DismissError) }
-            ) {
-                Text(stringResource(R.string.close))
-            }
-        }
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(Defaults.SnackbarIconTextSpacing)
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.outline_signal_disconnected_24),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(Defaults.SnackbarIconSize)
-            )
-            Text(description)
-        }
-    }
-}
-
-@Composable
-private fun EmptyStateView() {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(Defaults.EmptyStateSpacing)
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.empty_state),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(Defaults.EmptyStateIconSize)
-            )
-            Text(stringResource(R.string.no_results_found))
         }
     }
 }
