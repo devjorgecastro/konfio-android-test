@@ -35,7 +35,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.konfio.android.R
 import com.example.konfio.android.domain.model.Dog
 import com.example.konfio.android.ui.components.AnimatedDogDetailComponent
@@ -55,25 +55,22 @@ import com.example.konfio.android.ui.theme.DogsTheme
 @Composable
 fun SharedTransitionScope.DogsScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: DogsViewModel = hiltViewModel(),
-    onItemClick: (Dog) -> Unit = {}
+    viewModel: DogsViewModel = hiltViewModel()
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     DogsScreenContent(
         state = state,
         animatedVisibilityScope = animatedVisibilityScope,
-        onDispatchEvent = viewModel::onEvent,
-        onItemClick = onItemClick
+        onDispatchEvent = viewModel::onEvent
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SharedTransitionScope.DogsScreenContent(
-    state: DogsState = DogsState(),
+    state: DogContract.State = DogContract.State(),
     animatedVisibilityScope: AnimatedVisibilityScope? = null,
-    onDispatchEvent: (DogsEvent) -> Unit = {},
-    onItemClick: (Dog) -> Unit = {}
+    onDispatchEvent: (DogsEvent) -> Unit = {}
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -102,8 +99,7 @@ private fun SharedTransitionScope.DogsScreenContent(
                 DogsContent(
                     state = state,
                     animatedVisibilityScope = animatedVisibilityScope,
-                    onDispatchEvent = onDispatchEvent,
-                    onItemClick = onItemClick
+                    onDispatchEvent = onDispatchEvent
                 )
             }
         }
@@ -169,10 +165,9 @@ private fun RefreshIcon(
 
 @Composable
 private fun SharedTransitionScope.DogsContent(
-    state: DogsState = DogsState(),
+    state: DogContract.State = DogContract.State(),
     animatedVisibilityScope: AnimatedVisibilityScope? = null,
-    onDispatchEvent: (DogsEvent) -> Unit = {},
-    onItemClick: (Dog) -> Unit = {}
+    onDispatchEvent: (DogsEvent) -> Unit = {}
 ) {
     when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> {
@@ -205,7 +200,7 @@ private fun SharedTransitionScope.DogsContent(
                     DogItem(
                         dog = dog,
                         animatedVisibilityScope = animatedVisibilityScope,
-                        onDogClick = { onItemClick(dog) }
+                        onDogClick = { onDispatchEvent(DogsEvent.NavToDetail(dog)) }
                     )
                 }
             }
@@ -280,7 +275,7 @@ private fun DogsScreenPreview() {
     DogsTheme {
         SharedTransitionLayout {
             DogsScreenContent(
-                state = DogsState(
+                state = DogContract.State(
                     dogs = listOf(
                         Dog(
                             dogName = "Fox",

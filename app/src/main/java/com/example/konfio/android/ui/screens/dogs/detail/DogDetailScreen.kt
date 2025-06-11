@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,15 +41,17 @@ import androidx.compose.ui.graphics.Color
 
 private const val IMAGE_WIDTH = 350
 private const val IMAGE_HEIGHT = 550
+private const val DEFAULT_DELAY_FOR_ICON_ANIM = 300L
 
 @Composable
 fun SharedTransitionScope.DogDetailScreen(
+    viewModel: DogsDetailViewModel,
     dog: Dog,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     var showBackIcon by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        delay(500)
+        delay(DEFAULT_DELAY_FOR_ICON_ANIM)
         showBackIcon = true
     }
 
@@ -79,6 +82,9 @@ fun SharedTransitionScope.DogDetailScreen(
                     )
                     .clip(CircleShape)
                     .background(Color.White)
+                    .clickable(onClick = {
+                        viewModel.onEvent(DogDetailEvent.NavToBack)
+                    })
             )
         }
     }

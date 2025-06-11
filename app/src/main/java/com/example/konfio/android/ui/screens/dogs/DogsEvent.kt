@@ -7,4 +7,5 @@ sealed interface DogsEvent {
     data object RefreshDogs : DogsEvent
     data class SelectDog(val dog: Dog?) : DogsEvent
     data object DismissError : DogsEvent
-} 
+    data class NavToDetail(val dog: Dog) : DogsEvent
+}
