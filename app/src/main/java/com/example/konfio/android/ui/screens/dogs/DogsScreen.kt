@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalSharedTransitionApi::class)
+@file:OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 
 package com.example.konfio.android.ui.screens.dogs
 
@@ -19,9 +19,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -49,7 +52,6 @@ import com.example.konfio.android.ui.components.AnimatedDogDetailComponent
 import com.example.konfio.android.ui.components.DogItem
 import com.example.konfio.android.ui.theme.DogsTheme
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.DogsScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -76,16 +78,7 @@ private fun SharedTransitionScope.DogsScreenContent(
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = stringResource(id = R.string.dogs_we_love),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-                    }
-                )
+                DogTopBar(onDispatchEvent = onDispatchEvent)
             }
         ) { paddingValues ->
             val pullToRefreshState = rememberPullToRefreshState()
@@ -142,14 +135,46 @@ private fun SharedTransitionScope.DogsScreenContent(
 }
 
 @Composable
+private fun DogTopBar(
+    onDispatchEvent: (DogsEvent) -> Unit = {}
+) {
+    TopAppBar(
+        title = {
+            Text(
+                text = stringResource(id = R.string.dogs_we_love),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        },
+        actions = {
+            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                RefreshIcon(onDispatchEvent = onDispatchEvent)
+            }
+        }
+    )
+}
+
+@Composable
+private fun RefreshIcon(
+    onDispatchEvent: (DogsEvent) -> Unit = {}
+) {
+    IconButton(onClick = { onDispatchEvent(DogsEvent.RefreshDogs) }) {
+        Icon(
+            imageVector = Icons.Default.Refresh,
+            contentDescription = null
+        )
+    }
+}
+
+@Composable
 private fun SharedTransitionScope.DogsContent(
     state: DogsState = DogsState(),
     animatedVisibilityScope: AnimatedVisibilityScope? = null,
     onDispatchEvent: (DogsEvent) -> Unit = {},
     onItemClick: (Dog) -> Unit = {}
 ) {
-    val configuration = LocalConfiguration.current.orientation
-    when (configuration) {
+    when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(32.dp),
