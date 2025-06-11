@@ -52,6 +52,18 @@ import com.example.konfio.android.ui.components.AnimatedDogDetailComponent
 import com.example.konfio.android.ui.components.DogItem
 import com.example.konfio.android.ui.theme.DogsTheme
 
+private object Defaults {
+    val HorizontalPadding = 16.dp
+    val VerticalItemSpacingPortrait = 32.dp
+    val VerticalItemSpacingLandscape = 16.dp
+    val SnackbarPadding = 16.dp
+    val SnackbarIconSize = 40.dp
+    val SnackbarIconTextSpacing = 8.dp
+    val EmptyStateIconSize = 80.dp
+    val EmptyStateSpacing = 8.dp
+    const val MinDogsToDistributeSpace = 4
+}
+
 @Composable
 fun SharedTransitionScope.DogsScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -172,10 +184,10 @@ private fun SharedTransitionScope.DogsContent(
     when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> {
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(32.dp),
+                verticalArrangement = Arrangement.spacedBy(Defaults.VerticalItemSpacingPortrait),
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = Defaults.HorizontalPadding),
             ) {
                 items(state.dogs) { dog ->
                     DogItem(
@@ -187,14 +199,14 @@ private fun SharedTransitionScope.DogsContent(
         }
         else -> {
             LazyRow(
-                horizontalArrangement = if (state.dogs.size <= 4) {
+                horizontalArrangement = if (state.dogs.size <= Defaults.MinDogsToDistributeSpace) {
                     Arrangement.SpaceBetween
                 } else {
-                    Arrangement.spacedBy(16.dp)
+                    Arrangement.spacedBy(Defaults.VerticalItemSpacingLandscape)
                 },
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = Defaults.HorizontalPadding),
             ) {
                 items(state.dogs) { dog ->
                     DogItem(
@@ -216,7 +228,7 @@ private fun BoxScope.SnackbarView(
     Snackbar(
         modifier = Modifier
             .align(Alignment.BottomCenter)
-            .padding(16.dp),
+            .padding(Defaults.SnackbarPadding),
         action = {
             TextButton(
                 onClick = { onDispatchEvent(DogsEvent.DismissError) }
@@ -226,13 +238,13 @@ private fun BoxScope.SnackbarView(
         }
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(Defaults.SnackbarIconTextSpacing)
         ) {
             Icon(
                 painter = painterResource(R.drawable.outline_signal_disconnected_24),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(Defaults.SnackbarIconSize)
             )
             Text(description)
         }
@@ -248,13 +260,13 @@ private fun EmptyStateView() {
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(Defaults.EmptyStateSpacing)
         ) {
             Icon(
                 painter = painterResource(R.drawable.empty_state),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(80.dp)
+                    .size(Defaults.EmptyStateIconSize)
             )
             Text(stringResource(R.string.no_results_found))
         }
