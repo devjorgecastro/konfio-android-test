@@ -10,6 +10,7 @@ import javax.inject.Inject
 class LocalDogsDataSource @Inject constructor(
     private val dogsDao: DogsDao
 ): DogsDataSource {
+
     override suspend fun getDogs(): List<Dog> {
         return dogsDao.getDogs().map { it.toDog() }
     }
