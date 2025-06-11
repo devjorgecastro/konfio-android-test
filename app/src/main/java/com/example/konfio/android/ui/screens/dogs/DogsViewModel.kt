@@ -125,4 +125,4 @@ class DogsViewModel @Inject constructor(
             mutableNavEffect.send(DogContract.NavEffect.NavToDetail(dog))
         }
     }
-} 
+}
