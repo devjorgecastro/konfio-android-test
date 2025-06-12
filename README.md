@@ -87,8 +87,3 @@ app/
 ## 🔄 Continuous Integration
 - JUnit5 para testing
 - Gradle para automatización
-
-## 📱 Screenshots
-
-[Aquí irían los screenshots de la aplicación]
-
