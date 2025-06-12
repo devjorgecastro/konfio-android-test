@@ -2,6 +2,25 @@
 
 <img src="https://github.com/devjorgecastro/konfio-android-test/blob/develop/repo-assets/konfio-demo.gif?raw=true" width="200">
 
+## ⚙️ Configuración
+
+Para ejecutar el proyecto, necesitas agregar la siguiente propiedad en el archivo `local.properties`:
+
+```properties
+# Android SDK (reemplaza PATH_TO_SDK con la ruta de tu Android SDK)
+sdk.dir=/PATH_TO_SDK/Android/sdk
+```
+
+## 📊 Análisis de Código - Sonarqube
+
+El proyecto está configurado para reportar métricas de calidad a una instancia de Sonarqube montada en un VPS de OVH usando Docker. Puedes acceder al dashboard con las siguientes credenciales:
+
+```properties
+URL: http://51.222.110.137:9000
+Usuario: guest
+Password: @Guest123456
+```
+
 ## 🏗️ Estructura del Proyecto
 
 El proyecto sigue los principios de Clean Architecture con una clara separación de capas:
@@ -87,3 +106,9 @@ app/
 ## 🔄 Continuous Integration
 - JUnit5 para testing
 - Gradle para automatización
+
+## 📱 Screenshots
+
+### Sonarqube Report
+<img src="https://github.com/devjorgecastro/konfio-android-test/blob/develop/repo-assets/sonarqube-report.png?raw=true" width="700">
+
