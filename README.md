@@ -1,6 +1,6 @@
 # konfio-android-test
 
-![Demo de la app](repo-assets/konfio-demo.webp)
+<img src="https://github.com/devjorgecastro/konfio-android-test/blob/develop/repo-assets/konfio-demo.gif?raw=true" width="200">
 
 ## 🏗️ Estructura del Proyecto
 
