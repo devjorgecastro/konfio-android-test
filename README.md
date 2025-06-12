@@ -21,6 +21,14 @@ Usuario: guest
 Password: @Guest123456
 ```
 
+## 🔄 Integración Continua
+
+El proyecto implementa un pipeline de CI usando GitHub Actions que puedes ver [aquí](https://github.com/devjorgecastro/konfio-android-test/actions). El pipeline incluye:
+- Build del proyecto
+- Ejecución de tests unitarios
+- Análisis de código con Sonarqube
+- Verificación de calidad de código
+
 ## 🏗️ Estructura del Proyecto
 
 El proyecto sigue los principios de Clean Architecture con una clara separación de capas:
