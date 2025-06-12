@@ -28,7 +28,7 @@ jobs:
         run: |
           echo "SONAR_HOST_URL=${{ secrets.SONAR_HOST_URL }}" >> local.properties
           echo "SONAR_PROJECT_KEY=${{ secrets.SONAR_PROJECT_KEY }}" >> local.properties
-          echo "SONAR_PROJECT_NAME=Konfío Demo" >> local.properties
+          echo "SONAR_PROJECT_NAME=Konfio Demo" >> local.properties
 
       - name: Build project
         run: ./gradlew :app:assembleDebug
