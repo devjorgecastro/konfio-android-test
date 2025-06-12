@@ -1,6 +1,6 @@
 # konfio-android-test
 
-![Demo de la app](repo-assets/konfio-demo.gif)
+![Demo de la app](repo-assets/konfio-demo.webp)
 
 ## 🏗️ Estructura del Proyecto
 
